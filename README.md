@@ -1,2 +1,8 @@
 # CS229
- My solutions to assignments of CS229: Machine Learning ( Autumn 2016) from Stanford university 
+
+This repository contains my solutions to the assignments of the autumn 2016 version of the Stanford university course CS229:
+ Machine Learning.
+
+For more information about CS229 visit: http://cs229.stanford.edu/
+
+Content:
