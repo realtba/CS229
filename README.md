@@ -7,12 +7,11 @@ For more information about CS229 visit: http://cs229.stanford.edu/
 
 Content:
 
-# CS229 Problem Set 1
-===
-### Supervised Learning
-1. LogisticRegressionWithNewton.py: an implementation of logistic regression using Newton's method to fit the parameters.
+Problem Set 1
 
-2. Regression.py:  an implementation of linear and weighted linear regression using the normal equations to calculate the 
+LogisticRegressionWithNewton.py: an implementation of logistic regression using Newton's method to fit the parameters.
+
+Regression.py:  an implementation of linear and weighted linear regression using the normal equations to calculate the 
 parameters.
 
 ProblemSet2:
