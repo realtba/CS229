@@ -16,6 +16,6 @@ parameters.
 
 ProblemSet2:
 
-naivebayes.py/naivebayes.ipynb: spam classification using the naive bayes algorithm. Note: The error for small feature set is unexpected large. It is not clear if the problem is due to an error from translating the load matrix function from the provided matlab implementation to python or if my naive bayes algorithm implementation is bugged.
+naivebayes.py/naivebayes.ipynb: spam classification using the naive bayes algorithm. Note: The error for small feature sets is unexpected large. It is not clear if the problem is due to an error from translating the load matrix function from the provided matlab implementation to python or if my naive bayes algorithm implementation is bugged.
 
 
