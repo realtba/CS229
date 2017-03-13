@@ -1,15 +1,16 @@
 
 # coding: utf-8
 
-# In[172]:
+# In[21]:
 
 import numpy as np
 from scipy.sparse import lil_matrix
 from scipy.sparse import csc_matrix
+from sklearn import svm
 from __future__ import division
 
 
-# In[173]:
+# In[22]:
 
 # function to read in the sparsematrix format used by CS229
 def readMatrix(filenname):
@@ -35,7 +36,7 @@ def readMatrix(filenname):
     return (tokenlist, category, matrix)
 
 
-# In[174]:
+# In[23]:
 
 # Trains the Naive Bayes algorithm given a category vector and a desgin matrix.
 # Returns the conditional probabilities logSpamPhi, logNoSpamPhi and the prioris logSpamPrior, logNoSpamPrior
@@ -65,7 +66,7 @@ def trainNaiveBayes(category, matrix):
     return (logSpamPrior, logNoSpamPrior, logSpamPhi, logNoSpamPhi)
 
 
-# In[175]:
+# In[24]:
 
 # Uses Bayes' theorem to predict the class labels from the conditional probabilities logSpamPhi, logNoSpamPhi
 # and the prioris logSpamPrior, logNoSpamPrior
@@ -78,10 +79,31 @@ def isSpam(mail, logSpamPrior, logNoSpamPrior, logSpamPhi, logNoSpamPhi):
     return int(logPosterioriProbSpam > logPosterioriProbNoSpam)
 
 
-# In[176]:
+# In[25]:
+
+# sort the tokens in order of how indicative there are for spam
+def sortTokens(tokens, logSpamPrior, logNoSpamPrior, logSpamPhi, logNoSpamPhi):
+    sortedTokens = sorted(tokens.split(), key =lambda(token): np.log( ( logSpamPhi[tokens.split().index(token)] + logSpamPrior) 
+                                                             /(logNoSpamPhi[tokens.split().index(token)] + logNoSpamPrior)))
+    
+    return sortedTokens
+
+
+# In[26]:
+
+def trainSVM(category, matrix):
+    svmCategory = [2*category[i]-1 for i in range(len(category))]
+    classifier = svm.LinearSVC()
+    classifier.fit(matrix,svmCategory)
+    
+    return classifier
+    
+
+
+# In[48]:
 
 # Finally print the errors. 
-def printError():
+def printSolution():
     
     trainMatrix = ["MATRIX.TRAIN.50","MATRIX.TRAIN.100", "MATRIX.TRAIN.200", "MATRIX.TRAIN.400",
                    "MATRIX.TRAIN.800", "MATRIX.TRAIN.1400","MATRIX.TRAIN"]
@@ -92,21 +114,29 @@ def printError():
         
         (tokenlist, category, trainMatrix) = readMatrix(matrix)
         (logSpamPrior, logNoSpamPrior, logSpamPhi, logNoSpamPhi)= trainNaiveBayes(category, trainMatrix)
-
+        classifer = trainSVM(category, trainMatrix)
         correct = sum([1 for i in range(testArray.shape[0]) 
                 if (isSpam(testArray[i][:], logSpamPrior, logNoSpamPrior, logSpamPhi, logNoSpamPhi) == (categoryTest[i]==1))])/ testArray.shape[0]
-        print  "The error using the training features " + matrix + " is: " + str((1-correct)*100) +"%."
+        correctSVM = sum([1 for i in range(testArray.shape[0]) 
+            if ( (classifer.predict(testArray[i][:].reshape(1,-1))==1) == (categoryTest[i]==1))])/ testArray.shape[0]
+        
+        print  "The error using Naive Bayes and the training sample " + matrix + " is: " + str((1-correct)*100) +"%."
+        print  "The error using an SVM with a linear kernel and the training sample " + matrix + " is: " + str((1-correctSVM)*100) +"%."
+
+    sortedTokens = sortTokens(tokenlist,logSpamPrior, logNoSpamPrior, logSpamPhi, logNoSpamPhi)
+    print "The five most indicative tokens for spam are:"
+    for i in range(5):
+        print sortedTokens[i]
 
 
 # In[ ]:
 
-# Finally print the errors. 
-printError()
 
 
-# In[ ]:
 
+# In[49]:
 
+printSolution()
 
 
 # In[ ]:
