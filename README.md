@@ -16,6 +16,6 @@ parameters.
 
 ProblemSet2:
 
-naivebayes.py/naivebayes.ipynb: spam classification using the naive bayes algorithm.
+naivebayes.py/naivebayes.ipynb: spam classification using a own implementation of the naive bayes algorithm and a svm with linear kernel from scikit-learn.
 
 
