@@ -91,7 +91,7 @@ def printError():
     for matrix in trainMatrix:
         
         (tokenlist, category, trainMatrix) = readMatrix(matrix)
-        (logSpamPrior, logNoSpamPrior, logSpamPhi, logNoSpamPhi)= trainNaiveBayes2(category, trainMatrix)
+        (logSpamPrior, logNoSpamPrior, logSpamPhi, logNoSpamPhi)= trainNaiveBayes(category, trainMatrix)
 
         correct = sum([1 for i in range(testArray.shape[0]) 
                 if (isSpam(testArray[i][:], logSpamPrior, logNoSpamPrior, logSpamPhi, logNoSpamPhi) == (categoryTest[i]==1))])/ testArray.shape[0]
