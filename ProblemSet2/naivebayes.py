@@ -1,9 +1,7 @@
 
 # coding: utf-8
 
-# 
-
-# In[1]:
+# In[172]:
 
 import numpy as np
 from scipy.sparse import lil_matrix
@@ -11,7 +9,7 @@ from scipy.sparse import csc_matrix
 from __future__ import division
 
 
-# In[2]:
+# In[173]:
 
 # function to read in the sparsematrix format used by CS229
 def readMatrix(filenname):
@@ -37,13 +35,13 @@ def readMatrix(filenname):
     return (tokenlist, category, matrix)
 
 
-# In[3]:
+# In[174]:
 
-# Trains the Naive Bayes algorithm given the tokens, a category vector and the desgin matrix.
+# Trains the Naive Bayes algorithm given a category vector and a desgin matrix.
 # Returns the conditional probabilities logSpamPhi, logNoSpamPhi and the prioris logSpamPrior, logNoSpamPrior
 # The explicit form of these probabilities can be deduced by maximizing the joint log likelihood of the problem. 
-def trainNaiveBayes(tokenlist, category, matrix):
-       
+def trainNaiveBayes(category, matrix):
+    
     train = matrix.toarray()
     documents = train.shape[0]
     words = train.shape[1]
@@ -58,16 +56,16 @@ def trainNaiveBayes(tokenlist, category, matrix):
     allSpamWords = sum([sum([spamTrain[l][k] for l in range(spamDocuments)]) for k in range(words)])
     allNoSpamWords = sum([sum([noSpamTrain[l][k] for l in range(noSpamDocuments)]) for k in range(words)])  
     
-    logSpamPhi = np.log([ 1 + sum([spamTrain[i][j] for i in range(spamDocuments)]) /(words +allSpamWords)
+    logSpamPhi = np.log([( 1 + sum([spamTrain[i][j] for i in range(spamDocuments)])) /(words +allSpamWords)
                   for j in range(words)])
     
-    logNoSpamPhi = np.log([ 1 + sum([noSpamTrain[i][j] for i in range(noSpamDocuments)]) / (words + allNoSpamWords)
+    logNoSpamPhi = np.log([ (1 + sum([noSpamTrain[i][j] for i in range(noSpamDocuments)])) / (words + allNoSpamWords)
                     for j in range(words)])
     
     return (logSpamPrior, logNoSpamPrior, logSpamPhi, logNoSpamPhi)
 
 
-# In[4]:
+# In[175]:
 
 # Uses Bayes' theorem to predict the class labels from the conditional probabilities logSpamPhi, logNoSpamPhi
 # and the prioris logSpamPrior, logNoSpamPrior
@@ -77,14 +75,12 @@ def isSpam(mail, logSpamPrior, logNoSpamPrior, logSpamPhi, logNoSpamPhi):
     logPosterioriProbSpam = sum([mail[j]*logSpamPhi[j] for j in range(mail.shape[0])]) + logSpamPrior
     logPosterioriProbNoSpam = sum([mail[j]*logNoSpamPhi[j] for j in range(mail.shape[0])]) + logNoSpamPrior
     
-    return ( logPosterioriProbSpam > logPosterioriProbNoSpam)
+    return int(logPosterioriProbSpam > logPosterioriProbNoSpam)
 
 
-# In[9]:
+# In[176]:
 
-# Prints the classification error for MATRIX.TEST using the MATRIX.TRAIN,MATRIX.TRAIN.50, ... MATRIX.TRAIN.50.1400
-# to train the Naive Bayes algorithm.
-
+# Finally print the errors. 
 def printError():
     
     trainMatrix = ["MATRIX.TRAIN.50","MATRIX.TRAIN.100", "MATRIX.TRAIN.200", "MATRIX.TRAIN.400",
@@ -95,19 +91,16 @@ def printError():
     for matrix in trainMatrix:
         
         (tokenlist, category, trainMatrix) = readMatrix(matrix)
-        (logSpamPrior, logNoSpamPrior, logSpamPhi, logNoSpamPhi)= trainNaiveBayes(tokenlist, category, trainMatrix)
+        (logSpamPrior, logNoSpamPrior, logSpamPhi, logNoSpamPhi)= trainNaiveBayes2(category, trainMatrix)
 
         correct = sum([1 for i in range(testArray.shape[0]) 
                 if (isSpam(testArray[i][:], logSpamPrior, logNoSpamPrior, logSpamPhi, logNoSpamPhi) == (categoryTest[i]==1))])/ testArray.shape[0]
-        print  "The error using the train sample " + matrix + " is: " + str((1-correct)*100) +"%."
-    
+        print  "The error using the training features " + matrix + " is: " + str((1-correct)*100) +"%."
 
 
-# In[10]:
+# In[ ]:
 
 # Finally print the errors. 
-# Note that the errors for the smaller training sample seems way to large. I need to check if the trainNaiveBayes is bugged
-# or if i made a mistake translating the readMatrix function from matlab code to python.
 printError()
 
 
